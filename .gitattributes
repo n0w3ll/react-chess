@@ -1,0 +1,2 @@
+public/stockfish/stockfish.wasm filter=lfs diff=lfs merge=lfs -text
+stockfish.js-master.zip filter=lfs diff=lfs merge=lfs -text
