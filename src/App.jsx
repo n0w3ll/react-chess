@@ -4,6 +4,7 @@ import "./App.css";
 
 function App() {
   const [mode, setMode] = useState(null);
+  const [gameStart, setGameStart] = useState(false);
 
   return (
     <div className="container">
@@ -13,8 +14,14 @@ function App() {
           <button onClick={() => setMode("multiplayer")}>Multiplayer</button>
         </div>
       ) : (
-        <ChessGame mode={mode} />
+        <div className="game-options">
+          {!gameStart && ( 
+            <button onClick={() => setGameStart(true)}>Start Game</button>
+          )}
+        </div>
       )}
+
+      {gameStart && <ChessGame mode={mode} goToMainPage={() => navigate("/")} />}
     </div>
   );
 }

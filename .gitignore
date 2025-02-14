@@ -24,5 +24,4 @@ dist-ssr
 *.sw?
 
 # Large files
-public/stockfish/stockfish.wasm
-stockfish.js-master.zip
+# public/stockfish/stockfish.wasm
