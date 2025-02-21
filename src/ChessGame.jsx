@@ -6,7 +6,7 @@ import createStockfishWorker from "./workers/stockfishWorker";
 
 const socket = io("http://localhost:5000");
 
-const ChessGame = ({ mode, goToMainPage }) => {
+const ChessGame = ({ mode, goToMainPage, playerColor }) => {
     const [game, setGame] = useState(new Chess());
     const [fen, setFen] = useState(game.fen());
     const [engine, setEngine] = useState(null);
@@ -36,8 +36,14 @@ const ChessGame = ({ mode, goToMainPage }) => {
                     console.log("✅ Stockfish is ready!");
                     setEngineReady(true);
                     worker.postMessage(`setoption name Skill Level value ${aiLevel}`);
+
+                    // If player is black, AI moves first
+                    if (playerColor === "black") {
+                        setTimeout(makeAIMove, 500);
+                    }
                 }
             };
+                       
 
             return () => {
                 console.log("♟ Terminating Stockfish...");
@@ -71,23 +77,23 @@ const ChessGame = ({ mode, goToMainPage }) => {
             if (mode === "multiplayer") {
                 socket.emit("move", move);
             } else if (mode === "ai") {
-                makeAIMove();
+                setTimeout(makeAIMove, 500);
             }
         }
     };
 
     // Function to make AI move
-    const makeAIMove = () => {
-        if (!engine || !engineReady) {
+    const makeAIMove = (worker) => {
+        if (!worker || !engineReady) {
             console.error("❌ Stockfish engine is not initialized or not ready yet.");
             return;
         }
 
         console.log("♟ AI thinking...");
-        engine.postMessage(`position fen ${game.fen()}`);
-        engine.postMessage("go depth 10");
+        worker.postMessage(`position fen ${game.fen()}`);
+        worker.postMessage("go depth 10");
 
-        engine.onmessage = (event) => {
+        worker.onmessage = (event) => {
             console.log("Stockfish Move:", event.data);
 
             if (event.data.includes("bestmove")) {
